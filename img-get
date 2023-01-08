@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+THIS=$(dirname "$0")
+
+cd "$THIS/src/" || exit 1
+
+python3 -B -O -m img_get "$@"
