@@ -17,7 +17,7 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', length = 100, 
         fill        - Optional  : bar fill character (Str)
         printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
     """
-    percent = f"{iteration / total:.2%}"
+    percent = f"{iteration / total:.1%}"
     filled_length = int(length * (iteration / total))
     bar = fill * filled_length + '-' * (length - filled_length)
     print(f'\r{prefix} |{bar}| {percent}% {suffix}', end=printEnd)
