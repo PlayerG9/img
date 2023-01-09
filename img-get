@@ -2,6 +2,4 @@
 
 THIS=$(dirname "$0")
 
-cd "$THIS/src/" || exit 1
-
-python3 -B -O -m img_get "$@"
+PYTHONPATH="$THIS/src/" python3 -B -O -m img_get "$@"
