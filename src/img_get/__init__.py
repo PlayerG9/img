@@ -34,6 +34,9 @@ import requests
 from .util import printProgressBar
 
 
+CHUNK_SIZE = 1024 * 10  # 10 kB
+
+
 class HTTPError404(Exception):
     pass
 
@@ -87,7 +90,7 @@ def download(url: str):
     try:
         with open(dot_name, 'wb') as file:
             progress = 0
-            for chunk in response.iter_content():
+            for chunk in response.iter_content(CHUNK_SIZE):
                 file.write(chunk)
                 progress += len(chunk)
                 info = f"{str(progress).ljust(info_length)}/{content_size or 'X'}"
