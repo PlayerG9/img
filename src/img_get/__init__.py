@@ -73,25 +73,31 @@ def download(url: str):
 
     try:
         content_size = response.headers['Content-length']
+        info_length = len(content_size)
     except KeyError:
         content_size = None
+        info_length = 1
     else:
         content_size = int(content_size)
 
     filename = get_filename(url=url, response=response)
+    dot_name = f".{filename}"
     print(f"Writing to {filename}...")
 
     try:
-        with open(filename, 'wb') as file:
+        with open(dot_name, 'wb') as file:
             progress = 0
             for chunk in response.iter_content():
                 file.write(chunk)
                 progress += len(chunk)
-                printProgressBar(progress, content_size or 1, length=70)  # terminal size is 80 so reduced to 70
+                info = f"{str(progress).ljust(info_length)}/{content_size or 'X'}"
+                printProgressBar(progress, content_size or 1, prefix=info, length=70)  # terminal size is 80 so reduced to 70
     except Exception:
-        if os.path.isfile(filename):
-            os.remove(filename)
+        if os.path.isfile(dot_name):
+            os.remove(dot_name)
         raise
+    else:
+        os.rename(dot_name, filename)
 
 
 def get_filename(url: str, response: requests.Response):
