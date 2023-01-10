@@ -42,13 +42,20 @@ class HTTPError404(Exception):
 
 
 def img_get(url: str):
+    failed_once = False
+
     for iurl in url_iter(url):
         try:
             download(iurl)
         except HTTPError404:
             if url == iurl:
                 raise
+            if not failed_once:
+                failed_once = True
+                continue
             return
+        else:
+            failed_once = False
 
 
 def url_iter(url: str):
