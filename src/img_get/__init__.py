@@ -94,7 +94,7 @@ def download(url: str):
                 file.write(chunk)
                 progress += len(chunk)
                 info = f"{str(progress).ljust(info_length)}/{content_size or 'X'}"
-                printProgressBar(progress, content_size or 1, prefix=info, length=70)  # terminal size is 80 so reduced to 70
+                printProgressBar(progress, content_size or 1, prefix=info, length=50)  # terminal size is 80 so reduced to 70
     except Exception:
         if os.path.isfile(dot_name):
             os.remove(dot_name)
