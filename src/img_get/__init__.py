@@ -61,17 +61,22 @@ def img_get(url: str):
 def url_iter(url: str):
     yield url
 
-    match = list(re.finditer(r"\d+", url))[-1]
+    parsed = urllib.parse.urlparse(url)
+    path = parsed.path
+
+    match = list(re.finditer(r"\d+", path))[-1]
     start, stop = match.start(), match.end()
     number_string = match.group()
     str_length = len(number_string)
     number = int(number_string)
 
-    before, after = url[:start], url[stop:]
+    before, after = path[:start], path[stop:]
 
     while True:
         number += 1
-        yield f"{before}{str(number).rjust(str_length, '0')}{after}"
+        yield urllib.parse.urlunparse(
+            parsed._replace(path=f"{before}{str(number).rjust(str_length, '0')}{after}")
+        )
 
 
 def download(url: str):
