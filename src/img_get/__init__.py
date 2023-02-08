@@ -29,12 +29,13 @@ __version__ = ".".join(str(_) for _ in __version_info__)
 
 import os
 import re
+import sys
 import urllib.parse
 import requests
 from .util import printProgressBar
 
 
-CHUNK_SIZE = 1024 * 10  # 10 kB
+CHUNK_SIZE = 1024 * 50  # 50 kB
 
 
 class HTTPError404(Exception):
@@ -44,12 +45,13 @@ class HTTPError404(Exception):
 def img_get(url: str):
     failed_once = False
 
-    for iurl in url_iter(url):
+    for curl in url_iter(url):
         try:
-            download(iurl)
+            download(curl)
         except HTTPError404:
-            if url == iurl:
-                raise
+            if url == curl:
+                print(f"404 Not Found ({curl})")
+                sys.exit(1)
             if not failed_once:
                 failed_once = True
                 continue
@@ -95,7 +97,14 @@ def download(url: str):
     else:
         content_size = int(content_size)
 
-    filename = get_filename(url=url, response=response)
+    # skip-download if file with same size already exists
+    fn = extract_filename(url=url, response=response)
+    if os.path.isfile(fn):
+        if os.path.getsize(fn) == content_size:
+            return
+
+    # find next free filename
+    filename = get_free_filename(url=url, response=response)
     dot_name = f".{filename}"
     print(f"Writing to {filename}...")
 
@@ -115,7 +124,7 @@ def download(url: str):
         os.rename(dot_name, filename)
 
 
-def get_filename(url: str, response: requests.Response):
+def get_free_filename(url: str, response: requests.Response):
     fn = extract_filename(url=url, response=response)
     i = 0
     name, ext = os.path.splitext(fn)
