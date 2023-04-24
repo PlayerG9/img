@@ -25,8 +25,9 @@ RESTORE_BG = '\033[49m'
 class ProgressBar:
     _current_nr_lines: int = 0
     _start_time: float = 0
+    _fill: str = '█'
     _statistics: bool = True
-    _progress: float = None
+    _percent: float = None
     _blocking: bool = False
 
     @staticmethod
@@ -37,16 +38,18 @@ class ProgressBar:
     def get_current_nr_cols():
         return shutil.get_terminal_size((80, 20)).columns
 
-    def __init__(self, statistics: bool):
+    def __init__(self, fill: str = '█', statistics: bool = True):
+        self._fill = fill
         self._statistics = statistics
 
     @property
-    def progress(self):
-        return self._progress
+    def percent(self):
+        return self._percent
 
-    @progress.setter
-    def progress(self, value: float):
-        self._progress = value
+    @percent.setter
+    def percent(self, value: float):
+        self._percent = value
+        self._draw_progress_bar()
 
     def __enter__(self):
         self.setup()
@@ -72,7 +75,7 @@ class ProgressBar:
         self._send_code(CODE_CURSOR_IN_SCROLL_AREA)
 
         # Start empty progress bar
-        self._progress = 0.0
+        self._percent = 0.0
 
         # Setup start time
         self._start_time = time.time()
@@ -133,7 +136,7 @@ class ProgressBar:
         # Restore cursor position
         self._send_code(CODE_RESTORE_CURSOR)
 
-    def _draw_progress_bar(self, percentage):
+    def _draw_progress_bar(self):
         lines = self.get_current_nr_lines()
 
         if lines != self._current_nr_lines:
@@ -149,30 +152,12 @@ class ProgressBar:
         self._clrscr()
 
         # Draw progress bar
-        self._send_code(percentage)
+        self._print_bar_text(self.percent * 100)
 
         # Restore cursor position
         self._send_code(CODE_RESTORE_CURSOR)
 
-    def _block_progress_bar(self, percentage):
-        lines = self.get_current_nr_lines()
-        # Save cursor
-        self._send_code(CODE_SAVE_CURSOR)
-
-        # Move cursor position to last row
-        self._send_code("\033[" + str(lines) + ";0f")
-
-        # Clear progress bar
-        self._clrscr()
-
-        # Draw progress bar
-        self.blocking()
-        self._send_code(percentage)
-
-        # Restore cursor position
-        self._send_code(CODE_RESTORE_CURSOR)
-
-    def __print_bar_text(self, percentage):
+    def _print_bar_text(self, percentage):
         color = f"{COLOR_FG}{COLOR_BG}"
         if self._blocking:
             color = f"{COLOR_FG}{COLOR_BG_BLOCKED}"
@@ -189,10 +174,10 @@ class ProgressBar:
         # Prepare progress bar
         complete_size = (bar_size * percentage) / 100
         remainder_size = bar_size - complete_size
-        progress_bar = f"[{color}{'█' * int(complete_size)}{RESTORE_FG}{RESTORE_BG}{'.' * int(remainder_size)}]"
+        progress_bar = f"[{color}{self._fill * int(complete_size)}{RESTORE_FG}{RESTORE_BG}{'.' * int(remainder_size)}]"
 
         # Print progress bar
-        self._send_code(f" Progress {percentage}% {progress_bar} {r_bar}\r")
+        self._send_code(f" Progress {round(percentage):<3}% {progress_bar} {r_bar}\r")
 
     def _prepare_r_bar(self, n):
         elapsed = time.time() - self._start_time
@@ -201,8 +186,8 @@ class ProgressBar:
         # Percentage/second rate (or second/percentage if slow)
         rate = n / elapsed
         inv_rate = 1 / rate if rate else None
-        rate_noinv_fmt = f"{f'{rate:5.2f}' if rate else '?'}pct/s"
-        rate_inv_fmt = f"{f'{inv_rate:5.2f}' if inv_rate else '?'}s/pct"
+        rate_noinv_fmt = f"{f'{rate:5.2f}' if rate else '?'}%/s"
+        rate_inv_fmt = f"{f'{inv_rate:5.2f}' if inv_rate else '?'}s/%"
         rate_fmt = rate_inv_fmt if inv_rate and inv_rate > 1 else rate_noinv_fmt
 
         # Remaining time

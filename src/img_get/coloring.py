@@ -6,12 +6,11 @@ https://github.com/termcolor/termcolor#readme
 https://github.com/termcolor/termcolor/blob/main/src/termcolor/termcolor.py
 but it's slightly modified
 """
-import enum
 import functools
 import typing as t
 
 
-class ATTRIBUTE(enum.Enum):
+class ATTRIBUTE:
     bold = 1
     dark = 2
     underline = 4
@@ -20,7 +19,7 @@ class ATTRIBUTE(enum.Enum):
     concealed = 8
 
 
-class BACKGROUND(enum.Enum):
+class BACKGROUND:
     on_black = 40
     on_grey = 0  # Actually black but kept for backwards compatibility
     on_red = 41
@@ -40,7 +39,7 @@ class BACKGROUND(enum.Enum):
     on_white = 107
 
 
-class COLOR(enum.Enum):
+class COLOR:
     black = 30
     grey = 30  # Actually black but kept for backwards compatibility
     red = 31
