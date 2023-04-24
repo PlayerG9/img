@@ -35,8 +35,8 @@ from .progress_bar import ProgressBar
 from .coloring import colored
 
 
-#CHUNK_SIZE = 1024 * 100  # 100 kB
-CHUNK_SIZE = 1024  # 1 kB
+CHUNK_SIZE = 1024 * 100  # 100 kB
+# CHUNK_SIZE = 1024  # 1 kB
 
 
 class HTTPError404(Exception):
