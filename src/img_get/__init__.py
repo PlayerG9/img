@@ -136,7 +136,7 @@ def get_free_filename(url: str, response: requests.Response):
 def extract_filename(url: str, response: requests.Response):
     try:
         content_disposition = response.headers['Content-Disposition']
-        return re.findall("filename=(.+)", content_disposition)[0]
+        return next(re.finditer("filename=(.+)", content_disposition))
     except KeyError:
         parsed = urllib.parse.urlparse(url=url)
         return os.path.split(parsed.path)[1]
