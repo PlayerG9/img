@@ -7,7 +7,7 @@ $ git clone https://github.com/PlayerG9/img-get.git
 ```
 `~/.bash_aliases`
 ```bash
-alias img-get='/path/to/img-get/img-get'
+source '/path/to/img-get/scripts/bashrc'
 ```
 
 ## usage
