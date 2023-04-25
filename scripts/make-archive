@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+
+THIS="$(realpath "$(dirname "$(realpath "$0")")/..")"
+
+mkdir -p "$THIS/build"
+
+python3 -m zipapp -c -p "/usr/bin/env python3" src/ -m "img_get.__main__:main" -o "$THIS/build/img-get"
