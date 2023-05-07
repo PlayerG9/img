@@ -8,4 +8,4 @@ export PATH="${PATH}:$(realpath "$(dirname "${BASH_SOURCE[0]}")/path")"
 
 
 # autocompletion
-complete -W "https:// --help --version" img-get
+complete -W "https:// --help --version" img

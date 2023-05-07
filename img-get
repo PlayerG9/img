@@ -1,5 +1,0 @@
-#!/usr/bin/bash
-
-THIS=$(dirname "$(realpath "$0")")
-
-PYTHONPATH="$THIS/src/" python3 -B -O -m img_get "$@"

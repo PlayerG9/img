@@ -1,9 +1,9 @@
-img-get(1) -- like wget but for many images at once
+img(1) -- like wget but for many images at once
 =============================================
 
 ## SYNOPSIS
 
-`fileporter [-h] [-v] root`
+`img [-h] [-v] root`
 
 ## DESCRIPTION
 
@@ -22,7 +22,7 @@ show program's version number and exit
 
 ## EXAMPLES
 
-    $ img-get "https://raw.githubusercontent.com/PlayerG9/img-get/example/001.png"
+    $ img "https://raw.githubusercontent.com/PlayerG9/img/example/001.png"
 
 <!--
 ## SYNTAX
@@ -52,4 +52,4 @@ Copyright © 2023 PlayerG9.
 
 ### Repository
 
-https://github.com/PlayerG9/img-get
+https://github.com/PlayerG9/img

@@ -16,5 +16,5 @@ jobs:
     - run: scripts/make-archive
     - uses: ncipollo/release-action@v1
       with:
-        artifacts: "build/img-get"
+        artifacts: "build/"
         bodyFile: "CHANGELOG.md"

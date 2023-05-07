@@ -8,14 +8,14 @@ cd "$(realpath "$(dirname "$(realpath "$0")")/..")"
 mkdir -p "build/"
 
 # remove old source-code
-rm -rf "build/img_get/"
+rm -rf "build/img/"
 
 # copy source code
-cp -r "src/img_get" "build/"
+cp -r "src/img" "build/"
 
 # install dependencies into (new) copied source-code directory
-python3 -m pip install -q -r "requirements.txt" -t "build/img_get" --compile --disable-pip-version-check
-rm -rf build/img_get/*.dist-info
+python3 -m pip install -q -r "requirements.txt" -t "build/img" --compile --disable-pip-version-check
+rm -rf build/img/*.dist-info
 
 # make archive (from the new source-code directory)
-python3 -m zipapp -c -p "/usr/bin/env python3" build/ -m "img_get.__main__:main" -o "build/img-get"
+python3 -m zipapp -c -p "/usr/bin/env python3" build/ -m "img.__main__:main" -o "build/img"

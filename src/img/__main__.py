@@ -15,7 +15,7 @@ class NameSpace:
         return f"<args {self.__dict__}>"
 
 
-parser = argparse.ArgumentParser(prog="img-get", description=__doc__, add_help=True,
+parser = argparse.ArgumentParser(prog="img", description=__doc__, add_help=True,
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('-v', '--version', action="version", version=__version__)
 parser.add_argument('url', help="the url to start from")
