@@ -2,8 +2,20 @@
 set -e
 
 
-THIS="$(realpath "$(dirname "$(realpath "$0")")/..")"
+cd "$(realpath "$(dirname "$(realpath "$0")")/..")"
 
-mkdir -p "$THIS/build"
+# create build directory
+mkdir -p "build/"
 
-python3 -m zipapp -c -p "/usr/bin/env python3" src/ -m "img_get.__main__:main" -o "$THIS/build/img-get"
+# remove old source-code
+rm -rf "build/img_get/"
+
+# copy source code
+cp -r "src/img_get" "build/"
+
+# install dependencies into (new) copied source-code directory
+python3 -m pip install -q -r "requirements.txt" -t "build/img_get" --compile --disable-pip-version-check
+rm -rf build/img_get/*.dist-info
+
+# make archive (from the new source-code directory)
+python3 -m zipapp -c -p "/usr/bin/env python3" build/ -m "img_get.__main__:main" -o "build/img-get"
