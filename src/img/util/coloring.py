@@ -74,9 +74,9 @@ def _can_do_color():
 
 def colored(
     text: str,
-    color: str | None = None,
-    background: str | None = None,
-    attrs: t.Iterable[str] | None = None,
+    color: int | None = None,
+    background: int | None = None,
+    attrs: t.Iterable[int] | None = None,
 ) -> str:
     """Colorize text.
     Available text colors:
@@ -99,13 +99,13 @@ def colored(
     fmt_str = "\033[%dm%s"
 
     if color is not None:
-        text = fmt_str % (getattr(COLOR, color), text)
+        text = fmt_str % (color, text)
 
     if background is not None:
-        text = fmt_str % (getattr(BACKGROUND, background), text)
+        text = fmt_str % (background, text)
 
     if attrs is not None:
         for attr in attrs:
-            text = fmt_str % (getattr(ATTRIBUTE, attr), text)
+            text = fmt_str % (attr, text)
 
     return text + RESET
