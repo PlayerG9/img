@@ -22,6 +22,20 @@ RESTORE_FG = '\033[39m'
 RESTORE_BG = '\033[49m'
 
 
+class PseudoProgressBar:
+    def __init__(self, *_):
+        self.percent = 0.0
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb): ...
+    def setup(self): ...
+    def shutdown(self): ...
+    def blocking(self): ...
+    def resume(self): ...
+
+
 class ProgressBar:
     _current_nr_lines: int = 0
     _start_time: float = 0
