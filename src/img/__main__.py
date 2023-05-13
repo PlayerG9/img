@@ -64,6 +64,8 @@ scraper_parser = subparser.add_parser(
 scraper_parser.set_defaults(cls=lib_scraper.ImageScraper)
 scraper_parser.add_argument('--export', action="store_true", default=False,
                             help="only print the found urls instead of downloading the images.")
+scraper_parser.add_argument('-A', '--all-links', action="store_true", default=False,
+                            help="check all links if they are images")
 scraper_parser.add_argument('-D', '--max-depth', type=int, default=1,
                             help="how many linked pages to scrape")
 scraper_parser.add_argument('-W', '--min-width', type=int, default=0,
