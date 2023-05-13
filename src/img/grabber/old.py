@@ -9,8 +9,8 @@ import re
 import sys
 import urllib.parse
 import requests
-from img.util.progress_bar import ProgressBar
-from img.util.coloring import colored
+from ..util.progress_bar import ProgressBar
+from ..util.coloring import colored
 
 
 CHUNK_SIZE = 1024 * 100  # 100 kB

@@ -49,7 +49,8 @@ grabber_parser.add_argument('--skips', type=int, default=0,
                                  "This is the amount of images are allowed to be skipped/missing.")
 grabber_parser.add_argument('-F', '--formats', type=lambda s: s.split(","), nargs='?', const="jpg,png", default=[],
                             help=", seperated list of extensions to try if a [404] Not Found is returned")
-grabber_parser.add_argument('url', help="the url to start from")
+grabber_parser.add_argument('url',
+                            help="the url to start from")
 
 #
 # scraper
@@ -72,7 +73,8 @@ scraper_parser.add_argument('-W', '--min-width', type=int, default=0,
                             help="minimum width of images to download")
 scraper_parser.add_argument('-H', '--min-height', type=int, default=0,
                             help="minimum height of images to download")
-scraper_parser.add_argument('url', help="the url to start from")
+scraper_parser.add_argument('url',
+                            help="the url to start from")
 
 #
 # main
