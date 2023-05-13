@@ -5,7 +5,6 @@ todo: implement max-depth
 """
 import io
 import os
-import re
 import os.path as p
 import urllib.parse as urlparse
 import typing as t
@@ -14,6 +13,7 @@ import bs4
 from ..util.coloring import colored, COLOR
 from ..util import progress_bar as pb
 from ..util.image_size import get_image_size, UnknownImageFormat
+from ..util.responses import extract_content_size, get_free_filename
 
 
 class ImageScraper:
@@ -63,7 +63,7 @@ class ImageScraper:
                 content_type = response.headers.get('Content-Type', "")
                 if not content_type.startswith("image/"):
                     continue
-                content_size = self.extract_content_size(response)
+                content_size = extract_content_size(response)
                 chunks = response.iter_content(1024*512)
                 head = next(chunks)
                 if self.min_width or self.min_height:
@@ -79,7 +79,7 @@ class ImageScraper:
                 if self.export:
                     print(url)
                     continue
-                file_path = self.get_free_filename(response)
+                file_path = get_free_filename(response)
                 dot_path = f".{file_path}"
                 try:
                     with open(dot_path, 'wb') as file:
@@ -95,35 +95,3 @@ class ImageScraper:
                     raise
                 else:
                     os.rename(dot_path, file_path)
-
-    @staticmethod
-    def extract_content_size(response: requests.Response):
-        try:
-            content_size = response.headers['Content-length']
-        except KeyError:
-            content_size = None
-        else:
-            content_size = int(content_size)
-        return content_size
-
-    @staticmethod
-    def extract_filename(response: requests.Response):
-        try:
-            return next(re.finditer(r'filename=(.+)', response.headers['Content-Disposition']))
-        except (KeyError, StopIteration):
-            pass
-
-        u = urlparse.urlparse(response.url)
-        if '/' in u.path:
-            return u.path.rsplit('/', 1)[1]
-
-        return u.hostname
-
-    def get_free_filename(self, response: requests.Response):
-        fn = self.extract_filename(response=response)
-        i = 0
-        name, ext = p.splitext(fn)
-        while p.isfile(fn):
-            i += 1
-            fn = f"{name} ({i}){ext}"
-        return fn
