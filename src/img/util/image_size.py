@@ -21,7 +21,7 @@ class UnknownImageFormat(Exception):
     pass
 
 
-def get_image_size(size: int, file: io.BytesIO):
+def get_image_size(total: int, file: io.BytesIO):
     """
     Return (width, height) for a given img file content - no external
     dependencies except the os and struct modules from core
@@ -35,23 +35,23 @@ def get_image_size(size: int, file: io.BytesIO):
 
     data: bytes = file.read(25)
 
-    if (size >= 10) and data[:6] in (b'GIF87a', b'GIF89a'):
+    if (total >= 10) and data[:6] in (b'GIF87a', b'GIF89a'):
         # GIFs
         w, h = struct.unpack("<HH", data[6:10])
         width = int(w)
         height = int(h)
-    elif ((size >= 24) and data.startswith(b'\211PNG\r\n\032\n')
+    elif ((total >= 24) and data.startswith(b'\211PNG\r\n\032\n')
           and (data[12:16] == b'IHDR')):
         # PNGs
         w, h = struct.unpack(">LL", data[16:24])
         width = int(w)
         height = int(h)
-    elif (size >= 16) and data.startswith(b'\211PNG\r\n\032\n'):
+    elif (total >= 16) and data.startswith(b'\211PNG\r\n\032\n'):
         # older PNGs?
         w, h = struct.unpack(">LL", data[8:16])
         width = int(w)
         height = int(h)
-    elif (size >= 2) and data.startswith(b'\377\330'):
+    elif (total >= 2) and data.startswith(b'\377\330'):
         # JPEG
         msg = " raised while trying to decode as JPEG."
         file.seek(0)
@@ -79,7 +79,7 @@ def get_image_size(size: int, file: io.BytesIO):
             raise UnknownImageFormat("ValueError" + msg)
         except Exception as e:
             raise UnknownImageFormat(e.__class__.__name__ + msg)
-    elif (size >= 4) and data.startswith(b'RIFF'):  # WEBP
+    elif (total >= 4) and data.startswith(b'RIFF'):  # WEBP
         r"""
         https://datatracker.ietf.org/doc/html/rfc6386 (search for 'width' and the first describes this)
         
