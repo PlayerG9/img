@@ -5,15 +5,61 @@ todo: implement max-depth
 """
 import io
 import os
+import sys
 import os.path as p
 import urllib.parse as urlparse
 import typing as t
 import requests
+from requests.exceptions import HTTPError
 import bs4
 from ..util.coloring import colored, COLOR
 from ..util import progress_bar as pb
 from ..util.image_size import get_image_size, UnknownImageFormat
 from ..util.responses import extract_content_size, get_free_filename
+
+
+class Logger:
+    enabled: bool = True
+    @staticmethod
+    def delete_last_line():
+        # attempt one
+        # print(f"\033[A{' ' * self.terminal_width()}\033[A")
+
+        # attempt two
+        sys.stdout.write('\x1b[1A')  # cursor up one line
+        sys.stdout.write('\x1b[2K')  # delete last line
+
+    @staticmethod
+    def info(message, *extra, sep=" ", replace: bool = False):
+        if not Logger.enabled:
+            return
+        if replace:
+            Logger.delete_last_line()
+        print(message, *extra, sep=sep)
+
+    @staticmethod
+    def success(message, *extra, sep=" ", replace: bool = False):
+        if not Logger.enabled:
+            return
+        if replace:
+            Logger.delete_last_line()
+        print(colored(message, COLOR.green), *extra, sep=sep)
+
+    @staticmethod
+    def warning(message, *extra, sep=" ", replace: bool = False):
+        if not Logger.enabled:
+            return
+        if replace:
+            Logger.delete_last_line()
+        print(colored(message, COLOR.yellow), *extra, sep=sep)
+
+    @staticmethod
+    def error(message, *extra, sep=" ", replace: bool = False):
+        if not Logger.enabled:
+            return
+        if replace:
+            Logger.delete_last_line()
+        print(colored(message, COLOR.red), *extra, sep=sep)
 
 
 class ImageScraper:
@@ -53,15 +99,19 @@ class ImageScraper:
         return [url for url in urls if urlparse.urlparse(url).scheme.startswith("http")]
 
     def handle_urls(self, urls: t.List[str]):
+        Logger.enabled = not self.export
         with (
             (pb.PseudoProgressBar() if self.export else pb.ProgressBar()) as progressbar,
         ):
             for i, url in enumerate(urls):
                 progressbar.percent = i / len(urls)
+                Logger.info("Attempt:", url)
                 response = requests.get(url, stream=True)
-                response.raise_for_status()
+                if not response.ok:
+                    Logger.error(f"[{response.status_code}] response.reason")
                 content_type = response.headers.get('Content-Type', "")
                 if not content_type.startswith("image/"):
+                    Logger.error(f"Not an Image", f"({content_type})")
                     continue
                 content_size = extract_content_size(response)
                 chunks = response.iter_content(1024*512)
@@ -70,15 +120,15 @@ class ImageScraper:
                     try:
                         width, height = get_image_size(content_size or 100, io.BytesIO(head))
                     except UnknownImageFormat:
-                        if not self.export:
-                            print(colored("Unknown image format. Can't verify image-size", COLOR.yellow))
-                            print(f"\t{url}")
+                        Logger.warning("Unknown image format. Can't verify image-size")
                         continue
                     if width < self.min_width or height < self.min_height:
+                        Logger.error(f"Image too small")
                         continue
                 if self.export:
                     print(url)
                     continue
+                Logger.success("Download:", url)
                 file_path = get_free_filename(response)
                 dot_path = f".{file_path}"
                 try:
@@ -95,3 +145,6 @@ class ImageScraper:
                     raise
                 else:
                     os.rename(dot_path, file_path)
+
+    def continue_download(self, response: requests.Response):
+        raise NotImplementedError()
