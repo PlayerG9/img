@@ -39,7 +39,7 @@ grabber_parser = subparser.add_parser(
     "grab",
     help="Grab a collection of images",
     description=lib_grabber.__doc__,
-    # aliases=["get"],
+    aliases=["get"],
 )
 grabber_parser.set_defaults(cls=lib_grabber.ImageGrabber)
 grabber_parser.add_argument('--overwrite', action=argparse.BooleanOptionalAction, default=False,
@@ -49,6 +49,8 @@ grabber_parser.add_argument('--skips', type=int, default=0,
                                  "This is the amount of images are allowed to be skipped/missing.")
 grabber_parser.add_argument('-F', '--formats', type=lambda s: s.split(","), nargs='?', const="jpg,png", default=[],
                             help=", seperated list of extensions to try if a [404] Not Found is returned")
+grabber_parser.add_argument('-H', '--history', action=argparse.BooleanOptionalAction, default=False,
+                            help="add the last failed command to the history for better manual fixing")
 grabber_parser.add_argument('url',
                             help="the url to start from")
 
