@@ -5,7 +5,6 @@ todo: implement max-depth
 """
 import io
 import os
-import sys
 import os.path as p
 import urllib.parse as urlparse
 import typing as t
@@ -16,50 +15,7 @@ from ..util.coloring import colored, COLOR
 from ..util import progress_bar as pb
 from ..util.image_size import get_image_size, UnknownImageFormat
 from ..util.responses import extract_content_size, get_free_filename
-
-
-class Logger:
-    enabled: bool = True
-    @staticmethod
-    def delete_last_line():
-        # attempt one
-        # print(f"\033[A{' ' * self.terminal_width()}\033[A")
-
-        # attempt two
-        sys.stdout.write('\x1b[1A')  # cursor up one line
-        sys.stdout.write('\x1b[2K')  # delete last line
-
-    @staticmethod
-    def info(message, *extra, sep=" ", replace: bool = False):
-        if not Logger.enabled:
-            return
-        if replace:
-            Logger.delete_last_line()
-        print(message, *extra, sep=sep)
-
-    @staticmethod
-    def success(message, *extra, sep=" ", replace: bool = False):
-        if not Logger.enabled:
-            return
-        if replace:
-            Logger.delete_last_line()
-        print(colored(message, COLOR.green), *extra, sep=sep)
-
-    @staticmethod
-    def warning(message, *extra, sep=" ", replace: bool = False):
-        if not Logger.enabled:
-            return
-        if replace:
-            Logger.delete_last_line()
-        print(colored(message, COLOR.yellow), *extra, sep=sep)
-
-    @staticmethod
-    def error(message, *extra, sep=" ", replace: bool = False):
-        if not Logger.enabled:
-            return
-        if replace:
-            Logger.delete_last_line()
-        print(colored(message, COLOR.red), *extra, sep=sep)
+from ..util.logger import Logger
 
 
 class ImageScraper:
@@ -77,7 +33,7 @@ class ImageScraper:
         self.handle_urls(urls)
 
     @staticmethod
-    def fetch_website(url: str, check=True) -> str:
+    def fetch_website(url: str, check=True) -> bytes:
         response = requests.get(url)
         response.raise_for_status()
         content_type = response.headers.get('Content-Type', "")
@@ -88,7 +44,7 @@ class ImageScraper:
                 print(colored(f"Bad Content-Type ({content_type!r})", COLOR.yellow))
         return response.content
 
-    def find_all_urls(self, source: str, html: str):
+    def find_all_urls(self, source: str, html: bytes):
         soup = bs4.BeautifulSoup(html, 'html.parser')
         urls = []
         if self.all_links:
