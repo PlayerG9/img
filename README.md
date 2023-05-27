@@ -20,10 +20,16 @@ source '/path/to/img/scripts/bashrc'
 - and place it in `~/.local/bin/`
 
 ## usage
-```commandline
-$ img "https://github.com/PlayerG9/img/blob/main/example/001.png?raw=true"
+```bash
+$ img get "https://github.com/PlayerG9/img/blob/main/example/001.png?raw=true"
 $ ls
 001.png
 002.png
+003.png
+$ rm 001.png 002.png 003.png
+$ img scrape "https://raw.githubusercontent.com/PlayerG9/img/main/example/gallery.html"
+$ ls
+001.png
+002.ong
 003.png
 ```
