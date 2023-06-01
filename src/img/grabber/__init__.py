@@ -4,7 +4,10 @@ r"""
 
 """
 import re
+import sys
+
 import requests
+import subprocess
 import typing as t
 import urllib.parse as urlparse
 from ..util.coloring import colored, COLOR
@@ -66,5 +69,8 @@ class ImageGrabber:
         else:
             print(colored("Download:", COLOR.green), url, " ")
 
-    def add_to_history(self):
-        raise NotImplementedError()
+    def add_to_history(self, new_url: str):
+        url_index = sys.argv.index(self.url)
+        arguments = sys.argv.copy()
+        arguments[url_index] = new_url
+        subprocess.run(["history", "-s", *arguments])
