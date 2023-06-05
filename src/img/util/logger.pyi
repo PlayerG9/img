@@ -20,6 +20,9 @@ class Logger:
     def info(message: str, *extra, sep: str = " ", replace: bool = False) -> None: ...
 
     @staticmethod
+    def success(message: str, *extra, sep: str = " ", replace: bool = False) -> None: ...
+
+    @staticmethod
     def warning(message: str, *extra, sep: str = " ", replace: bool = False) -> None: ...
 
     @staticmethod

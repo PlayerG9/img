@@ -4,9 +4,12 @@ r"""
 
 """
 import re
+import sys
 import requests
+import subprocess
 import typing as t
 import urllib.parse as urlparse
+from ..util.logger import Logger
 from ..util.coloring import colored, COLOR
 from ..util.responses import extract_content_size, extract_filename
 
@@ -51,20 +54,23 @@ class ImageGrabber:
             number += 1
 
     def download(self, url: str):
-        print("Attempt:", url, "   ", end="\r")
+        Logger.info("Attempt:", url)
         try:
             response = requests.get(url=url, timeout=(20, None), stream=True)
             if response.status_code == 404:
                 raise HTTPError404()
             response.raise_for_status()
         except HTTPError404:
-            print(colored("Not Found:", COLOR.red), url, "")
+            Logger.error("Not Found:", url)
             raise
         except Exception:
-            print(colored("Failed:", COLOR.red), url, "   ")
+            Logger.error("Failed:", url)
             raise
         else:
-            print(colored("Download:", COLOR.green), url, " ")
+            Logger.success("Download:", url)
 
-    def add_to_history(self):
-        raise NotImplementedError()
+    def add_to_history(self, new_url: str):
+        url_index = sys.argv.index(self.url)
+        arguments = sys.argv.copy()
+        arguments[url_index] = new_url
+        subprocess.check_call(["history", "-s", *arguments])
