@@ -5,12 +5,10 @@ r"""
 """
 import os
 import re
+import shlex
 import time
-
 import sys
 import requests
-import subprocess
-import typing as t
 import urllib.parse as urlparse
 from concurrent.futures import ThreadPoolExecutor
 from ..logger import Logger, Waiting
@@ -18,11 +16,12 @@ from ..downloader import Downloader
 
 
 class ImageGrabber:
-    def __init__(self, url: str, overwrite: bool, skips: int, formats: t.List[str], history: bool):
+    # def __init__(self, url: str, overwrite: bool, skips: int, formats: t.List[str], history: bool):
+    def __init__(self, url: str, skips: int, history: bool):
         self.url = url
-        self.overwrite = overwrite
+        # self.overwrite = overwrite
         self.skips = skips
-        self.formats = formats
+        # self.formats = formats
         self.history = history
         self.attempted = 0
         self.downloaded = 0
@@ -43,6 +42,8 @@ class ImageGrabber:
                     if tries < self.skips:
                         tries += 1
                         continue
+                    if self.history:
+                        self.add_to_history(url)
                     break
                 response.raise_for_status()
 
@@ -91,7 +92,9 @@ class ImageGrabber:
             i += 1
 
     def add_to_history(self, new_url: str):
+        return # no implemented yer
         url_index = sys.argv.index(self.url)
         arguments = sys.argv.copy()
         arguments[url_index] = new_url
-        subprocess.check_call(["history", "-s", *arguments])
+        with open(os.path.expanduser("~/.bash_history"), 'a') as history:
+            history.write(f"{shlex.join(arguments)}\n")

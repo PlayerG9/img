@@ -42,13 +42,13 @@ grabber_parser = subparser.add_parser(
     aliases=["get"],
 )
 grabber_parser.set_defaults(cls=lib_grabber.ImageGrabber)
-grabber_parser.add_argument('--overwrite', action=argparse.BooleanOptionalAction, default=False,
-                            help="whether or not to overwrite existing images")
-grabber_parser.add_argument('--skips', type=int, default=0,
+# grabber_parser.add_argument('-O', '--overwrite', action=argparse.BooleanOptionalAction, default=False,
+#                             help="whether or not to overwrite existing images")
+grabber_parser.add_argument('-S', '--skips', type=int, default=0,
                             help="sometimes images are missing."
-                                 "This is the amount of images are allowed to be skipped/missing.")
-grabber_parser.add_argument('-F', '--formats', type=lambda s: s.split(","), nargs='?', const="jpg,png", default=[],
-                            help=", seperated list of extensions to try if a [404] Not Found is returned")
+                                 "This is the amount of images that are allowed to be skipped/missing.")
+# grabber_parser.add_argument('-F', '--formats', type=lambda s: s.split(","), nargs='?', const="jpg,png", default=[],
+#                             help=", seperated list of extensions to try if a [404] Not Found is returned")
 grabber_parser.add_argument('-H', '--history', action=argparse.BooleanOptionalAction, default=False,
                             help="add the last failed command to the history for better manual fixing")
 grabber_parser.add_argument('url',
