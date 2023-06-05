@@ -3,23 +3,18 @@
 r"""
 
 """
+import os
 import re
+import time
+
 import sys
 import requests
 import subprocess
 import typing as t
 import urllib.parse as urlparse
-from ..util.logger import Logger
-from ..util.coloring import colored, COLOR
-from ..util.responses import extract_content_size, extract_filename
-
-
-CHUNK_SIZE = 1024 * 100  # 100 kB
-# CHUNK_SIZE = 1024  # 1 kB
-
-
-class HTTPError404(Exception):
-    pass
+from concurrent.futures import ThreadPoolExecutor
+from ..logger import Logger, Waiting
+from ..downloader import Downloader
 
 
 class ImageGrabber:
@@ -33,41 +28,67 @@ class ImageGrabber:
         self.downloaded = 0
 
     def run(self):
-        raise NotImplementedError()
+        tries = 0
+        max_workers = min(8, os.cpu_count())
+        active = 0
+        with (Logger(), ThreadPoolExecutor(max_workers) as pool):
+            for url in self.iter_urls():
+                self.attempted += 1
 
-    def iter_urls(self) -> t.Iterator[str]:
+                response = requests.get(url=url, timeout=(20, None), stream=True)
+                downloader = Downloader(response)
+                Logger.print(downloader)
+
+                if response.status_code == 404:
+                    if tries < self.skips:
+                        tries += 1
+                        continue
+                    break
+                response.raise_for_status()
+
+                tries = 0
+                self.downloaded += 1
+                active += 1
+
+                def download():
+                    nonlocal active
+                    downloader.download()
+                    active -= 1
+
+                pool.submit(download)
+
+                while active >= max_workers:
+                    time.sleep(0.01)
+
+            Logger.print(Waiting())
+            Logger.print(f"Exc-hook {sys.excepthook}")
+        Logger.undo_last_line()
+        print(f"Found and downloaded {self.downloaded} images")
+
+    def prepare_url(self) -> str:
+        # already prepared
+        if re.search(r"\{\d+}", self.url) is not None:
+            return self.url
+
         parsed = urlparse.urlparse(self.url)
-        urlpath = parsed.path
+        match = list(re.finditer(r"\d+", parsed.path))[-1]
+        start, num_str, stop = match.start(), match.group(), match.end()
+        return urlparse.urlunparse(
+            parsed._replace(path=f"{parsed.path[:start]}{{{num_str}}}{parsed.path[stop:]}")
+        )
 
-        match = list(re.finditer(r"\d+", urlpath))[-1]
-        start, stop = match.start(), match.end()
-        number_string = match.group()
-        digits_length = len(number_string)
-        number = int(number_string)
+    def iter_urls(self):
+        basis = self.prepare_url()
 
-        before, after = urlpath[:start], urlpath[stop:]
+        def repl(match: re.Match) -> str:
+            num_str = match.group(1)
+            return str(int(num_str) + i).rjust(len(num_str), "0")
+
+        i = 0
 
         while True:
-            yield urlparse.urlunparse(
-                parsed._replace(path=f"{before}{str(number).rjust(digits_length, '0')}{after}")
-            )
-            number += 1
-
-    def download(self, url: str):
-        Logger.info("Attempt:", url)
-        try:
-            response = requests.get(url=url, timeout=(20, None), stream=True)
-            if response.status_code == 404:
-                raise HTTPError404()
-            response.raise_for_status()
-        except HTTPError404:
-            Logger.error("Not Found:", url)
-            raise
-        except Exception:
-            Logger.error("Failed:", url)
-            raise
-        else:
-            Logger.success("Download:", url)
+            yield re.sub(r"\{(\d+)}", repl, basis)
+            i += 1
 
     def add_to_history(self, new_url: str):
         url_index = sys.argv.index(self.url)

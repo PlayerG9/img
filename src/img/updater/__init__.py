@@ -12,7 +12,7 @@ from pathlib import Path
 import typing as t
 from distutils.version import LooseVersion
 import requests
-from ..util.coloring import colored, COLOR
+from ..logger.coloring import colored, COLOR
 from ..util.progress_bar import ProgressBar
 from .. import __version__
 

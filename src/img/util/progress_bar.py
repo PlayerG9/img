@@ -134,7 +134,8 @@ class ProgressBar:
             return f"{m:02d}:{s:02d}"
 
     def _clrscr(self):
-        self._send_code(curses.tparm(curses.tigetstr("el")).decode())
+        self._send_code("\x1b[2K")
+        # self._send_code(curses.tparm(curses.tigetstr("el")).decode())
 
     def _clear_progress_bar(self):
         lines = self.get_current_nr_lines()

@@ -10,7 +10,7 @@ import sys
 import urllib.parse
 import requests
 from ..util.progress_bar import ProgressBar
-from ..util.coloring import colored
+from src.img.logger.coloring import colored
 
 
 CHUNK_SIZE = 1024 * 100  # 100 kB

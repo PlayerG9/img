@@ -5,7 +5,7 @@ r"""
 """
 import functools
 import sys
-from ..logger.coloring import colored, COLOR
+from src.img.logger.coloring import colored, COLOR
 
 
 class Logger:
@@ -21,15 +21,15 @@ class Logger:
         cls.file.write('\x1b[1A')  # cursor up one line
         cls.file.write('\x1b[2K')  # delete last line
 
-    @staticmethod
-    def _wrap(func):
+    @classmethod
+    def _wrap(cls, func):
         @functools.wraps
         def wrapped(*args, **kwargs):
-            if not Logger.enabled:
+            if not cls.enabled:
                 return
             replace = kwargs.pop('replace')
             if replace:
-                Logger.delete_last_line()
+                cls.delete_last_line()
             func(*args, **kwargs)
 
         return wrapped
