@@ -11,8 +11,9 @@ from .codes import Codes
 
 class Logger:
     lines = []
-    _last_size = 0
+    max_update = 20  # maximum number of entries to update
     interval = 0.5
+    _last_size = 0
     _auto_updating = False
     _thread: threading.Thread = None
 
@@ -54,8 +55,8 @@ class Logger:
     def update(cls):
         cls._send(Codes.SAVE_CURSOR)
         try:
-            cls._send(Codes.MOVE_CURSOR_UP * cls._last_size)
-            for value in cls.lines:
+            cls._send(Codes.MOVE_CURSOR_UP * min(cls.max_update, cls._last_size))
+            for value in cls.lines[-cls.max_update:]:
                 if value.__class__.__module__ == '__builtin__':
                     cls._send(Codes.MOVE_CURSOR_DOWN)
                     continue

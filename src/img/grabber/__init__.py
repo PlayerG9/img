@@ -30,40 +30,42 @@ class ImageGrabber:
         tries = 0
         max_workers = min(8, os.cpu_count())
         active = 0
-        with (Logger(), ThreadPoolExecutor(max_workers) as pool):
-            for url in self.iter_urls():
-                self.attempted += 1
+        try:
+            with (Logger(), ThreadPoolExecutor(max_workers) as pool):
+                for url in self.iter_urls():
+                    self.attempted += 1
 
-                response = requests.get(url=url, timeout=(20, None), stream=True)
-                downloader = Downloader(response)
-                Logger.print(downloader)
+                    response = requests.get(url=url, timeout=(20, None), stream=True)
+                    downloader = Downloader(response)
+                    Logger.print(downloader)
 
-                if response.status_code == 404:
-                    if tries < self.skips:
-                        tries += 1
-                        continue
-                    if self.history:
-                        self.add_to_history(url)
-                    break
-                response.raise_for_status()
+                    if response.status_code == 404:
+                        if tries < self.skips:
+                            tries += 1
+                            continue
+                        if self.history:
+                            self.add_to_history(url)
+                        break
+                    response.raise_for_status()
 
-                tries = 0
-                self.downloaded += 1
-                active += 1
+                    tries = 0
+                    self.downloaded += 1
+                    active += 1
 
-                def download():
-                    nonlocal active
-                    downloader.download()
-                    active -= 1
+                    def download():
+                        nonlocal active
+                        downloader.download()
+                        active -= 1
 
-                pool.submit(download)
+                    pool.submit(download)
 
-                while active >= max_workers:
-                    time.sleep(0.01)
+                    while active >= max_workers:
+                        time.sleep(0.01)
 
-            Logger.print(Waiting())
-            Logger.print(f"Exc-hook {sys.excepthook}")
-        Logger.undo_last_line()
+                Logger.print(Waiting())
+            Logger.undo_last_line()
+        except KeyboardInterrupt:
+            pass
         print(f"Found and downloaded {self.downloaded} images")
 
     def prepare_url(self) -> str:

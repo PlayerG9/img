@@ -36,11 +36,9 @@ class Downloader:
         tmp_file = f".{self.filename}"
         try:
             with open(tmp_file, 'wb') as file:
-                # for chunk in self.response.iter_content(100):
                 for chunk in self.response.iter_content(1024*512):
                     file.write(chunk)
                     self.cached += len(chunk)
-                    # time.sleep(0.1)
         except BaseException:
             if p.isfile(tmp_file):
                 os.remove(tmp_file)

@@ -54,22 +54,26 @@ class ImageScraper:
     def handle_urls(self, urls: t.List[str]):
         max_workers = min(8, os.cpu_count())
         active = 0
-        with (Logger(), ThreadPoolExecutor(max_workers) as pool):
-            for url in urls:
-                response = requests.get(url=url, timeout=(20, None), stream=True)
-                downloader = Downloader(response)
-                Logger.print(downloader)
+        try:
+            with (Logger(), ThreadPoolExecutor(max_workers) as pool):
+                for url in urls:
+                    response = requests.get(url=url, timeout=(20, None), stream=True)
+                    downloader = Downloader(response)
+                    Logger.print(downloader)
 
-                active += 1
+                    active += 1
 
-                def download():
-                    nonlocal active
-                    downloader.download()
-                    active -= 1
+                    def download():
+                        nonlocal active
+                        downloader.download()
+                        active -= 1
 
-                pool.submit(download)
+                    pool.submit(download)
 
-                while active >= max_workers:
-                    time.sleep(0.01)
+                    while active >= max_workers:
+                        time.sleep(0.01)
 
-            Logger.print(Waiting())
+                Logger.print(Waiting())
+            Logger.undo_last_line()
+        except KeyboardInterrupt:
+            pass
