@@ -54,6 +54,7 @@ class Logger:
     @classmethod
     def update(cls):
         cls._send(Codes.SAVE_CURSOR)
+        new_lines = 0
         try:
             cls._send(Codes.MOVE_CURSOR_UP * min(cls.max_update, cls._last_size))
             for value in cls.lines[-cls.max_update:]:
@@ -62,9 +63,11 @@ class Logger:
                     continue
                 cls._send(Codes.DELETE_LINE)
                 print(value, flush=False)
+            new_lines = len(cls.lines) - cls._last_size
             cls._last_size = len(cls.lines)
         finally:
             cls._send(Codes.RESTORE_CURSOR)
+            cls._send(Codes.MOVE_CURSOR_DOWN * new_lines)
             sys.stdout.flush()
 
     @staticmethod
