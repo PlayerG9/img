@@ -51,7 +51,8 @@ class Downloader:
         terminal_width = get_terminal_size()[0]
         # failed
         if not self.response.ok:
-            return f"{Codes.FG_RED}{self.response.status_code}{Codes.RESTORE_FG} {self.response.url[-terminal_width:]}"
+            shortened = self.response.url[-(terminal_width-4):]
+            return f"{Codes.FG_RED}{self.response.status_code}{Codes.RESTORE_FG} {shortened}"
         # success
         status = f"{Codes.FG_LIGHT_GREEN}{self.response.status_code}{Codes.RESTORE_FG}"
         if self.complete:  # completed
