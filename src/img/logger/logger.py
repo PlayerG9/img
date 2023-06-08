@@ -53,7 +53,8 @@ class Logger:
 
     @classmethod
     def update(cls):
-        cls._send(Codes.MOVE_CURSOR_UP * min(cls.max_update, cls._last_size))
+        diff = len(cls.lines) - cls._last_size
+        cls._send(Codes.MOVE_CURSOR_UP * min(cls.max_update - diff, cls._last_size))
         for value in cls.lines[-cls.max_update:]:
             if value.__class__.__module__ == '__builtin__':
                 cls._send(Codes.MOVE_CURSOR_DOWN)  # eq to \n
