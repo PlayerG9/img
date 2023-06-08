@@ -3,6 +3,14 @@
 r"""
 
 """
+# r"""
+#   _                                                                 _
+#  (_)_ __ ___   __ _    ___ ___  _ __ ___  _ __ ___   __ _ _ __   __| |
+#  | | '_ ` _ \ / _` |  / __/ _ \| '_ ` _ \| '_ ` _ \ / _` | '_ \ / _` |
+#  | | | | | | | (_| | | (_| (_) | | | | | | | | | | | (_| | | | | (_| |
+#  |_|_| |_| |_|\__, |  \___\___/|_| |_| |_|_| |_| |_|\__,_|_| |_|\__,_|
+#               |___/
+# """
 import argparse
 from . import __version__
 from . import grabber as lib_grabber
@@ -10,8 +18,12 @@ from . import scraper as lib_scraper
 from . import updater as lib_updater
 
 
-parser = argparse.ArgumentParser(prog="img", description=__doc__, add_help=True,
-                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+class FormatterClass(argparse.RawDescriptionHelpFormatter, argparse.ArgumentDefaultsHelpFormatter):
+    pass
+
+
+parser = argparse.ArgumentParser(prog="img", description=__doc__,
+                                 add_help=True, formatter_class=FormatterClass)
 parser.add_argument('-v', '--version', action="version", version=__version__)
 
 subparser = parser.add_subparsers(required=True)

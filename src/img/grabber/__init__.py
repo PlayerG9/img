@@ -94,7 +94,7 @@ class ImageGrabber:
             i += 1
 
     def add_to_history(self, new_url: str):
-        return # no implemented yer
+        return  # not implemented yet
         url_index = sys.argv.index(self.url)
         arguments = sys.argv.copy()
         arguments[url_index] = new_url

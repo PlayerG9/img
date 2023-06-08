@@ -26,7 +26,7 @@ class Logger:
     @classmethod
     def __exit__(cls, exc_type, exc_val, exc_tb):
         cls._auto_updating = False
-        cls._thread.join(cls.interval * 2)
+        cls._thread.join(cls.interval * 10)
         cls.update()  # dunno how helpful
         cls.reset()
 
