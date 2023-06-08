@@ -21,6 +21,7 @@ class Downloader:
         self.content_size: int | None = None
         self.filename: str | None = None
         self._start_time = None
+        self._error: BaseException | None = None
 
     def background_download(self):
         if self.response.ok:
@@ -29,25 +30,27 @@ class Downloader:
     def download(self):
         if not self.response.ok:
             return
-        self._start_time = time.time()
-
         self.content_size = extract_content_size(self.response)
         self.filename = get_free_filename(self.response)
         tmp_file = f".{self.filename}"
+        self._start_time = time.time()
         try:
             with open(tmp_file, 'wb') as file:
                 for chunk in self.response.iter_content(1024*512):
                     file.write(chunk)
                     self.cached += len(chunk)
-        except BaseException:
+        except BaseException as exception:
             if p.isfile(tmp_file):
                 os.remove(tmp_file)
-            raise
+            self._error = exception
+            raise exception
         else:
             os.rename(tmp_file, self.filename)
             self.complete = True
 
     def __str__(self):
+        if self._error:
+            return f"{Codes.FG_RED}{self._error.__class__.__name__}:{Codes.RESTORE_FG} {str(self._error)}"
         terminal_width = get_terminal_size()[0]
         # failed
         if not self.response.ok:
