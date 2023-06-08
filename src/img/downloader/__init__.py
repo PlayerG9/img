@@ -56,15 +56,20 @@ class Downloader:
         # success
         status = f"{Codes.FG_LIGHT_GREEN}{self.response.status_code}{Codes.RESTORE_FG}"
         if self.complete:  # completed
-            return f"{status} {self.filename!r}"
+            return f"{status} {self.filename}"
         if self.content_size is None:  # unknown content-size
             return f"{status} {self.cached / 1024}kb"
         # progress
         percent = self.cached / self.content_size
         stats = self._get_stats(percent)
-        bar_width = min(100, terminal_width - 10 - len(stats))
-        bar = self._get_progress_bar(bar_width, percent)
-        return f"{status} {bar} {percent * 100:3.0f}% {stats}"
+        if (len(self.filename) + 40) < terminal_width:
+            bar_width = min(100, terminal_width - 10 - len(stats) - len(self.filename))
+            bar = self._get_progress_bar(bar_width, percent)
+            return f"{status} {self.filename} {bar} {percent * 100:3.0f}% {stats}"
+        else:
+            bar_width = min(100, terminal_width - 10 - len(stats))
+            bar = self._get_progress_bar(bar_width, percent)
+            return f"{status} {bar} {percent * 100:3.0f}% {stats}"
 
     @staticmethod
     def _get_progress_bar(width: int, percent: float):
