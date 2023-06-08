@@ -63,7 +63,7 @@ class Downloader:
         percent = self.cached / self.content_size
         stats = self._get_stats(percent)
         if (len(self.filename) + 40) < terminal_width:
-            bar_width = min(100, terminal_width - 10 - len(stats) - len(self.filename))
+            bar_width = min(100, terminal_width - 11 - len(stats) - len(self.filename))
             bar = self._get_progress_bar(bar_width, percent)
             return f"{status} {self.filename} {bar} {percent * 100:3.0f}% {stats}"
         else:
