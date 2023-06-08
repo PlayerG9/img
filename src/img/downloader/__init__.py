@@ -52,7 +52,8 @@ class Downloader:
         # failed
         if not self.response.ok:
             shortened = self.response.url[-(terminal_width-4):]
-            return f"{Codes.FG_RED}{self.response.status_code}{Codes.RESTORE_FG} {shortened}"
+            return f"{Codes.FG_RED}{self.response.status_code}{Codes.RESTORE_FG} " \
+                   f"{Codes.FG_GREY}{shortened}{Codes.RESTORE_FG}"
         # success
         status = f"{Codes.FG_LIGHT_GREEN}{self.response.status_code}{Codes.RESTORE_FG}"
         if self.complete:  # completed
