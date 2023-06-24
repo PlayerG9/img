@@ -1,16 +1,37 @@
 .\" generated with Ronn-NG/v0.9.1
 .\" http://github.com/apjanke/ronn-ng/tree/0.9.1
-.TH "IMG" "1" "May 2023" ""
+.TH "IMG" "1" "June 2023" ""
 .SH "NAME"
 \fBimg\fR \- like wget but for many images at once
 .SH "SYNOPSIS"
-\fBimg [\-h] [\-v] root\fR
+.IP "\[ci]" 4
+\fBimg [\-h] [\-v] {update,grab,get,scrape} \|\.\|\.\|\.\fR
+.IP "\[ci]" 4
+\fBimg grab [\-h] [\-S SKIPS] [\-H | \-\-history | \-\-no\-history] url\fR
+.IP "\[ci]" 4
+\fBimg scrape [\-h] [\-A] url\fR
+.IP "" 0
 .SH "DESCRIPTION"
-automatically download many images at once\.
+automatically download many images at once or scrape a website\.
 .SH "OPTIONS"
+.SS "grab/get"
 .TP
 url
-the starting which should be scraped
+the starting url which is extended\. note: use {num} manually in case multiple numbers are increasing\. (eg: img get https://images\.com/img_{01}_{90274}\.png)
+.TP
+\-H, \-\-history, \-\-no\-history
+whether to append the last attempted url to the command\-history or not\. (currently not working)
+.TP
+\-S, \-\-skips
+how many urls/images are allowed to be missing before stopping
+.SS "scrape"
+.TP
+url
+the url of the website to scrape for images
+.TP
+\-A, \-\-all\-links
+without, scrape only downloads \fB<img src="\|\.\|\.\|\.">\fR links\. With the \fB\-A\fR option it also attempts to download the \fB<a href="\|\.\|\.\|\."><img/></a>\fR
+.SS "general options"
 .TP
 \-h, \-\-help
 show the help message and exit
@@ -19,8 +40,12 @@ show the help message and exit
 show program's version number and exit
 .SH "EXAMPLES"
 .nf
-$ img "https://raw\.githubusercontent\.com/PlayerG9/img/example/001\.png"
+$ img get "https://raw\.githubusercontent\.com/PlayerG9/img/example/001\.png"
+
+$ img scrape "https://raw\.githubusercontent\.com/PlayerG9/img/main/example/gallery\.html"
 .fi
+.SH "HISTORY"
+This Project was renamed and extended from the \fBimg\-get\fR command to the nowadays more versatile \fBimg\fR command
 .SH "AUTHOR"
 PlayerG9 \- https://github\.com/PlayerG9/
 .SH "COPYRIGHT"
@@ -28,3 +53,5 @@ Copyright \(co 2023 PlayerG9\.
 .SH "SEE ALSO"
 .SS "Repository"
 https://github\.com/PlayerG9/img
+.SS "Releases"
+https://github\.com/PlayerG9/img/releases
