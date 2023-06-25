@@ -9,7 +9,7 @@
 .IP "\[ci]" 4
 \fBimg grab [\-h] [\-S SKIPS] [\-H | \-\-history | \-\-no\-history] url\fR
 .IP "\[ci]" 4
-\fBimg scrape [\-h] [\-A] url\fR
+\fBimg scrape [\-h] [\-A] [\-W] [\-H] url\fR
 .IP "" 0
 .SH "DESCRIPTION"
 automatically download many images at once or scrape a website\.
@@ -28,6 +28,12 @@ how many urls/images are allowed to be missing before stopping
 .TP
 url
 the url of the website to scrape for images
+.TP
+\-W, \-\-min\-width
+minimum width of images to scrape them
+.TP
+\-H, \-\-min\-height
+minimum height of images to scrape them
 .TP
 \-A, \-\-all\-links
 without, scrape only downloads \fB<img src="\|\.\|\.\|\.">\fR links\. With the \fB\-A\fR option it also attempts to download the \fB<a href="\|\.\|\.\|\."><img/></a>\fR

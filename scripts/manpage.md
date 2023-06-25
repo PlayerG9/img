@@ -5,7 +5,7 @@ img(1) -- like wget but for many images at once
 
 - `img [-h] [-v] {update,grab,get,scrape} ...`
 - `img grab [-h] [-S SKIPS] [-H | --history | --no-history] url`
-- `img scrape [-h] [-A] url`
+- `img scrape [-h] [-A] [-W] [-H] url`
 
 ## DESCRIPTION
 
@@ -31,6 +31,12 @@ how many urls/images are allowed to be missing before stopping
 
 * url:
 the url of the website to scrape for images
+
+* -W, --min-width:
+minimum width of images to scrape them
+
+* -H, --min-height:
+minimum height of images to scrape them
 
 * -A, --all-links:
 without, scrape only downloads `<img src="...">` links.
