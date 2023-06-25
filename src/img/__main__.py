@@ -81,9 +81,9 @@ scraper_parser.add_argument('-A', '--all-links', action="store_true", default=Fa
                             help="check all links if they are images")
 # scraper_parser.add_argument('-D', '--max-depth', type=int, default=1,
 #                             help="how many linked pages to scrape")
-scraper_parser.add_argument('-W', '--min-width', type=int, default=None,
+scraper_parser.add_argument('-W', '--min-width', type=int, nargs='?', const=1000, default=None,
                             help="minimum width of images to download")
-scraper_parser.add_argument('-H', '--min-height', type=int, default=None,
+scraper_parser.add_argument('-H', '--min-height', type=int, nargs='?', const=1000, default=None,
                             help="minimum height of images to download")
 scraper_parser.add_argument('url',
                             help="the url to start from")
