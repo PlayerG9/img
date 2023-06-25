@@ -11,7 +11,7 @@ from .codes import Codes
 
 class Logger:
     lines = []
-    max_update = 20  # maximum number of entries to update
+    max_update = 25  # maximum number of entries to update
     interval = 0.5
     _last_size = 0
     _auto_updating = False

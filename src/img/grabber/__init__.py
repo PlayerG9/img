@@ -6,13 +6,12 @@ r"""
 import os
 import re
 import shlex
-import time
 import sys
 import requests
 import urllib.parse as urlparse
-from concurrent.futures import ThreadPoolExecutor
 from ..logger import Logger, Waiting
-from ..downloader import Downloader
+from ..downloader import Downloader, DownloadPool
+from ..util.responses import is_image_type
 
 
 class ImageGrabber:
@@ -28,14 +27,17 @@ class ImageGrabber:
 
     def run(self):
         tries = 0
-        max_workers = min(8, os.cpu_count())
-        active = 0
         try:
-            with (Logger(), ThreadPoolExecutor(max_workers) as pool):
+            with (Logger(), DownloadPool() as pool):
                 for url in self.iter_urls():
                     self.attempted += 1
 
                     response = requests.get(url=url, timeout=(20, None), stream=True)
+                    if not is_image_type(response):
+                        if tries < self.skips:
+                            tries += 1
+                            continue
+                        break
                     downloader = Downloader(response)
                     Logger.print(downloader)
 
@@ -50,17 +52,8 @@ class ImageGrabber:
 
                     tries = 0
                     self.downloaded += 1
-                    active += 1
 
-                    def download():
-                        nonlocal active
-                        downloader.download()
-                        active -= 1
-
-                    pool.submit(download)
-
-                    while active >= max_workers:
-                        time.sleep(0.01)
+                    pool.submit(downloader.download)
 
                 Logger.print(Waiting())
             Logger.undo_last_line()
@@ -94,6 +87,9 @@ class ImageGrabber:
             i += 1
 
     def add_to_history(self, new_url: str):
+        r"""
+        maybe use readline instead of custom implementation
+        """
         return  # not implemented yet
         url_index = sys.argv.index(self.url)
         arguments = sys.argv.copy()

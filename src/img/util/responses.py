@@ -11,7 +11,7 @@ from requests import Response
 
 def extract_content_size(response: Response):
     try:
-        content_size = response.headers['Content-length']
+        content_size = response.headers['Content-Length']
     except KeyError:
         content_size = None
     else:
@@ -40,3 +40,12 @@ def get_free_filename(response: Response):
         i += 1
         fn = f"{name} ({i}){ext}"
     return fn
+
+
+def is_image_type(response: Response):
+    try:
+        content_type: str = response.headers["Content-Type"]
+    except KeyError:
+        return False
+    else:
+        return content_type.startswith("image/")

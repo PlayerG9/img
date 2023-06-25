@@ -55,7 +55,7 @@ grabber_parser = subparser.add_parser(
 )
 grabber_parser.set_defaults(cls=lib_grabber.ImageGrabber)
 # grabber_parser.add_argument('-O', '--overwrite', action=argparse.BooleanOptionalAction, default=False,
-#                             help="whether or not to overwrite existing images")
+#                             help="whether to overwrite existing images")
 grabber_parser.add_argument('-S', '--skips', type=int, default=0,
                             help="sometimes images are missing."
                                  "This is the amount of images that are allowed to be skipped/missing.")
@@ -81,10 +81,10 @@ scraper_parser.add_argument('-A', '--all-links', action="store_true", default=Fa
                             help="check all links if they are images")
 # scraper_parser.add_argument('-D', '--max-depth', type=int, default=1,
 #                             help="how many linked pages to scrape")
-# scraper_parser.add_argument('-W', '--min-width', type=int, default=0,
-#                             help="minimum width of images to download")
-# scraper_parser.add_argument('-H', '--min-height', type=int, default=0,
-#                             help="minimum height of images to download")
+scraper_parser.add_argument('-W', '--min-width', type=int, default=None,
+                            help="minimum width of images to download")
+scraper_parser.add_argument('-H', '--min-height', type=int, default=None,
+                            help="minimum height of images to download")
 scraper_parser.add_argument('url',
                             help="the url to start from")
 

@@ -3,26 +3,24 @@
 r"""
 todo: implement max-depth
 """
-import os
-import time
 import typing as t
 import urllib.parse as urlparse
-from concurrent.futures import ThreadPoolExecutor
 import requests
 import bs4
 from ..logger.coloring import colored, COLOR
 from ..logger import Logger, Waiting
-from ..downloader import Downloader
+from ..downloader import Downloader, DownloadPool
+from ..util.responses import is_image_type
 
 
 class ImageScraper:
     # def __init__(self, url: str, all_links: bool, max_depth: int, min_width: int, min_height: int):
-    def __init__(self, url: str, all_links: bool):
+    def __init__(self, url: str, all_links: bool, min_width: int, min_height: int):
         self.url = url
         self.all_links = all_links
         # self.max_depth = max_depth
-        # self.min_width = min_width
-        # self.min_height = min_height
+        self.min_width = min_width
+        self.min_height = min_height
 
     def run(self):
         html = self.fetch_website(self.url, check=False)
@@ -45,33 +43,23 @@ class ImageScraper:
         soup = bs4.BeautifulSoup(html, 'html.parser')
         urls = []
         if self.all_links:
-            for link in soup.select('a[href]:has(img)'):
+            for link in soup.select('a[href]:has(img[src])'):
                 urls.append(urlparse.urljoin(source, link['href']))
         for img in soup.select('img[src]'):
             urls.append(urlparse.urljoin(source, img['src']))
         return [url for url in urls if url.startswith("http")]
 
     def handle_urls(self, urls: t.List[str]):
-        max_workers = min(8, os.cpu_count())
-        active = 0
         try:
-            with (Logger(), ThreadPoolExecutor(max_workers) as pool):
+            with (Logger(), DownloadPool() as pool):
                 for url in urls:
                     response = requests.get(url=url, timeout=(20, None), stream=True)
-                    downloader = Downloader(response)
+                    if not is_image_type(response):
+                        continue
+                    downloader = Downloader(response, min_width=self.min_width, min_height=self.min_height)
                     Logger.print(downloader)
 
-                    active += 1
-
-                    def download():
-                        nonlocal active
-                        downloader.download()
-                        active -= 1
-
-                    pool.submit(download)
-
-                    while active >= max_workers:
-                        time.sleep(0.01)
+                    pool.submit(downloader.download)
 
                 Logger.print(Waiting())
             Logger.undo_last_line()
