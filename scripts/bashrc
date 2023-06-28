@@ -8,4 +8,30 @@ export PATH="${PATH}:$(realpath "$(dirname "${BASH_SOURCE[0]}")/path")"
 
 
 # autocompletion
-complete -W "https:// --help --version" img
+
+_img_completions()
+{
+    local SUBCOMMAND=${COMP_WORDS[1]}
+    local CURRENT_WORD=${COMP_WORDS[$COMP_CWORD]}
+    local LAST_WORD=${COMP_WORDS[$(($COMP_CWORD - 1))]}
+
+#     echo "'$SUBCOMMAND' '$LAST_WORD' '$CURRENT_WORD'"
+
+    if [[ "$SUBCOMMAND" = "grab" || "$SUBCOMMAND" = "get" ]]; then
+        if [[ "$LAST_WORD" = "--skips" ]]; then
+            COMPREPLY=($(compgen -W "1 3 5 10" -- "${CURRENT_WORD}"))
+        else
+            COMPREPLY=($(compgen -W "--help --skips" -- "${CURRENT_WORD}"))
+        fi
+    elif [[ "$SUBCOMMAND" = "scrape" ]]; then
+        if [[ "$LAST_WORD" = "--min-width" || "$LAST_WORD" = "--min-height" ]]; then
+            COMPREPLY=($(compgen -W "256 512 1024 2048" -- "${CURRENT_WORD}"))
+        else
+            COMPREPLY=($(compgen -W "--help --all-links --min-width --min-height" -- "${CURRENT_WORD}"))
+        fi
+    else
+        COMPREPLY=($(compgen -W "--help --version update scrape grab get" -- "${CURRENT_WORD}"))
+    fi
+}
+
+complete -F _img_completions img
