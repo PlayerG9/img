@@ -19,4 +19,4 @@ python3 -m pip install -q -r "requirements.txt" -t "build/img_src/" --compile --
 rm -rf build/img_src/*.dist-info
 
 # make archive (from the new source-code directory)
-python3 -m zipapp -c -p "/usr/bin/env python3" build/ -m "img_src.__main__:main" -o "build/img"
+python3 -m zipapp -c -p "/usr/bin/env -S python3 -B -O" build/ -m "img_src.__main__:main" -o "build/img"
