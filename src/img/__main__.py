@@ -15,6 +15,7 @@ import argparse
 from . import __version__
 from . import grabber as lib_grabber
 from . import scraper as lib_scraper
+from . import viewer as lib_viewer
 from . import updater as lib_updater
 
 
@@ -39,7 +40,7 @@ update_parser = subparser.add_parser(
     # aliases=["upgrade"],
 )
 update_parser.set_defaults(cls=lib_updater.Updater)
-update_parser.add_argument("--check-only", action="store_true",
+update_parser.add_argument("--check-only", action=argparse.BooleanOptionalAction,
                            help="only check for a new version but don't upgrade")
 
 
@@ -87,6 +88,26 @@ scraper_parser.add_argument('-H', '--min-height', type=int, nargs='?', const=100
                             help="minimum height of images to download")
 scraper_parser.add_argument('url',
                             help="the url to start from")
+
+#
+# viewer
+#
+
+viewer_parser = subparser.add_parser(
+    "view",
+    help="Directly view an image in the terminal",
+    description=lib_scraper.__doc__,
+    aliases=["show"],
+)
+viewer_parser.set_defaults(cls=lib_viewer.ImageViewer)
+viewer_parser.add_argument('-W', '--width', type=int, default=None,
+                           help="width of the image in characters")
+viewer_parser.add_argument('-H', '--height', type=int, default=None,
+                           help="height of the image in characters")
+viewer_parser.add_argument('-D', '--detailed', action=argparse.BooleanOptionalAction, default=False,
+                           help="view the image without color but with more details")
+viewer_parser.add_argument('path',
+                           help="the image to view")
 
 #
 # main

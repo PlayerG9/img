@@ -24,13 +24,26 @@ _img_completions()
             COMPREPLY=($(compgen -W "--help --skips" -- "${CURRENT_WORD}"))
         fi
     elif [[ "$SUBCOMMAND" = "scrape" ]]; then
-        if [[ "$LAST_WORD" = "--min-width" || "$LAST_WORD" = "--min-height" ]]; then
+        if [[ "$LAST_WORD" = "-W" || "$LAST_WORD" = "--min-width" || "$LAST_WORD" = "-H" || "$LAST_WORD" = "--min-height" ]]; then
             COMPREPLY=($(compgen -W "256 512 1024 2048" -- "${CURRENT_WORD}"))
         else
             COMPREPLY=($(compgen -W "--help --all-links --min-width --min-height" -- "${CURRENT_WORD}"))
         fi
+    elif [[ "$SUBCOMMAND" = "view" || "$SUBCOMMAND" = "show" ]]; then
+        if [[  "$LAST_WORD" = "-W" || "$LAST_WORD" = "--width" ||  "$LAST_WORD" = "-H" || "$LAST_WORD" = "--height" ]]; then
+            COMPREPLY=()
+        else
+            COMPREPLY=($(compgen -W "--help --width --height --detailed" -- "${CURRENT_WORD}"))
+            # see: https://salsa.debian.org/debian/bash-completion/blob/master/bash_completion
+            # as to why _filedir is better than -f
+#             COMPREPLY+=($(compgen -f -- "${CURRENT_WORD}"))
+            cur="$CURRENT_WORD"
+            _filedir
+        fi
+    elif [[ "$SUBCOMMAND" = "update" ]]; then
+        COMPREPLY=($(compgen -W "--help --check-only" -- "${CURRENT_WORD}"))
     else
-        COMPREPLY=($(compgen -W "--help --version update scrape grab get" -- "${CURRENT_WORD}"))
+        COMPREPLY=($(compgen -W "--help --version update scrape grab get view show" -- "${CURRENT_WORD}"))
     fi
 }
 
