@@ -28,7 +28,7 @@ class ImageGrabber:
     def run(self):
         tries = 0
         try:
-            with (Logger(), DownloadPool() as pool):
+            with Logger(), DownloadPool() as pool:
                 for url in self.iter_urls():
                     self.attempted += 1
 
@@ -67,7 +67,11 @@ class ImageGrabber:
             return self.url
 
         parsed = urlparse.urlparse(self.url)
-        match = list(re.finditer(r"\d+", parsed.path))[-1]
+        matches = list(re.finditer(r"\d+", parsed.path))
+        if not matches:
+            print("Failed to identify increment in provided url")
+            sys.exit(1)
+        match = matches[-1]
         start, num_str, stop = match.start(), match.group(), match.end()
         return urlparse.urlunparse(
             parsed._replace(path=f"{parsed.path[:start]}{{{num_str}}}{parsed.path[stop:]}")

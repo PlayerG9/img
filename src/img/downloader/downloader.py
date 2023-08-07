@@ -60,9 +60,12 @@ class Downloader:
                     file.write(chunk)
                     self.cached += len(chunk)
         except BaseException as exception:
-            if p.isfile(tmp_file):
-                os.remove(tmp_file)
             self._error = exception
+            if p.isfile(tmp_file):
+                try:
+                    os.remove(tmp_file)
+                except (OSError, FileNotFoundError):
+                    pass
             raise exception
         else:
             os.rename(tmp_file, self.filename)
