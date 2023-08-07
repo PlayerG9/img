@@ -60,6 +60,10 @@ class Logger:
                 cls._send(Codes.MOVE_CURSOR_DOWN)  # eq to \n
                 continue
             cls._send(Codes.DELETE_LINE)
+            try:
+                value = str(value)
+            except Exception as exc:
+                value = f"{type(exc).__name__}: {exc}"
             print(value, flush=False)
         cls._last_size = len(cls.lines)
         sys.stdout.flush()

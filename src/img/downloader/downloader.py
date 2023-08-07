@@ -117,6 +117,8 @@ class Downloader:
                f"{Codes.RESTORE_FG}{Codes.RESTORE_BG}"
 
     def _get_stats(self, percent):
+        if not self._start_time:
+            return "[--:--<--:--]"
         elapsed = time.time() - self._start_time
         elapsed_str = self._format_interval(elapsed)
 
