@@ -41,17 +41,21 @@ class ImageScraper:
 
     def find_all_urls(self, source: str, html: bytes):
         soup = bs4.BeautifulSoup(html, 'html.parser')
-        urls = set()
+        urls = []
         if self.all_links:
             for link in soup.select('a[href]:has(img[src])'):
-                urls.add(urlparse.urljoin(source, link['href']))
+                url = urlparse.urljoin(source, link['href'])
+                if url not in urls:
+                    urls.append(url)
         for img in soup.select('img[src]'):
-            urls.add(urlparse.urljoin(source, img['src']))
+            url = urlparse.urljoin(source, img['src'])
+            if url not in urls:
+                urls.append(url)
         return [url for url in urls if url.startswith("http")]
 
     def handle_urls(self, urls: t.List[str]):
         try:
-            with (Logger(), DownloadPool() as pool):
+            with Logger(), DownloadPool() as pool:
                 for url in urls:
                     response = requests.get(url=url, timeout=(20, None), stream=True)
                     if not is_image_type(response):
