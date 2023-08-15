@@ -85,7 +85,10 @@ class Downloader:
         if self.complete:  # completed
             return f"{status} {self.filename}"
         if self.content_size is None:  # unknown content-size
-            return f"{status} {self.cached / 1024}kb"
+            if not self.cached:
+                return f"{status} Waiting in queue"
+            else:
+                return f"{status} {self.cached / 1024}kb"
         # progress
         percent = self.cached / self.content_size
         stats = self._get_stats(percent)
