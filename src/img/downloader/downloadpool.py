@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 class DownloadPool:
     def __init__(self, max_workers: int = None):
-        self._max_workers = max_workers or min(8, os.cpu_count())
+        self._max_workers = max_workers or min(4, os.cpu_count())
         self._active = 0
         self._pool = ThreadPoolExecutor(max_workers=self._max_workers)
 

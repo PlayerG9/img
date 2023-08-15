@@ -59,6 +59,7 @@ class Downloader:
                 for chunk in stream:
                     file.write(chunk)
                     self.cached += len(chunk)
+            os.rename(tmp_file, self.filename)
         except BaseException as exception:
             self._error = exception
             if p.isfile(tmp_file):
@@ -68,7 +69,6 @@ class Downloader:
                     pass
             raise exception
         else:
-            os.rename(tmp_file, self.filename)
             self.complete = True
 
     def __str__(self):
