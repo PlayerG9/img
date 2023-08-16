@@ -1,54 +1,74 @@
 .\" generated with Ronn-NG/v0.9.1
 .\" http://github.com/apjanke/ronn-ng/tree/0.9.1
-.TH "IMG" "1" "June 2023" ""
+.TH "IMG" "1" "August 2023" ""
 .SH "NAME"
 \fBimg\fR \- like wget but for many images at once
 .SH "SYNOPSIS"
 .IP "\[ci]" 4
 \fBimg [\-h] [\-v] {update,grab,get,scrape} \|\.\|\.\|\.\fR
 .IP "\[ci]" 4
-\fBimg grab [\-h] [\-S SKIPS] [\-H | \-\-history | \-\-no\-history] url\fR
+\fBimg grab [\-h] [\-S SKIPS] [\-H] url\fR
 .IP "\[ci]" 4
 \fBimg scrape [\-h] [\-A] [\-W] [\-H] url\fR
+.IP "\[ci]" 4
+\fBimg view [\-h] [\-D] [\-W] [\-H] src\fR
 .IP "" 0
 .SH "DESCRIPTION"
 automatically download many images at once or scrape a website\.
 .SH "OPTIONS"
 .SS "grab/get"
+Download a collection of images that contain an incremental number in the path\. e\.g\. https://images\.com/img_01\.png
 .TP
-url
+\fBurl\fR
 the starting url which is extended\. note: use {num} manually in case multiple numbers are increasing\. (eg: img get https://images\.com/img_{01}_{90274}\.png)
 .TP
-\-H, \-\-history, \-\-no\-history
+\fB\-H\fR, \fB\-\-history\fR, \fB\-\-no\-history\fR
 whether to append the last attempted url to the command\-history or not\. (currently not working)
 .TP
-\-S, \-\-skips
+\fB\-S\fR, \fB\-\-skips\fR
 how many urls/images are allowed to be missing before stopping
 .SS "scrape"
+Scrape all images from given website\.
 .TP
-url
+\fBurl\fR
 the url of the website to scrape for images
 .TP
-\-W, \-\-min\-width
+\fB\-W\fR, \fB\-\-min\-width\fR
 minimum width of images to scrape them
 .TP
-\-H, \-\-min\-height
+\fB\-H\fR, \fB\-\-min\-height\fR
 minimum height of images to scrape them
 .TP
-\-A, \-\-all\-links
+\fB\-A\fR, \fB\-\-all\-links\fR
 without, scrape only downloads \fB<img src="\|\.\|\.\|\.">\fR links\. With the \fB\-A\fR option it also attempts to download the \fB<a href="\|\.\|\.\|\."><img/></a>\fR
+.SS "view/show"
+View an image directly in the terminal
+.TP
+\fBpath\fR/\fBurl\fR
+the source of the image (either filepath or url) to display
+.TP
+\fB\-W\fR, \fB\-\-width\fR
+width of image in characters (1 character = 1 pixel)
+.TP
+\fB\-H\fR, \fB\-\-height\fR
+height of image in characters (1 character = 2 pixel)
+.TP
+\fB\-D\fR, \fB\-\-detailed\fR, \fB\-\-no\-detailed\fR
+use an alternative way to display the image with double the resolution but without colors
 .SS "general options"
 .TP
-\-h, \-\-help
+\fB\-h\fR, \fB\-\-help\fR
 show the help message and exit
 .TP
-\-v, \-\-version
+\fB\-v\fR, \fB\-\-version\fR
 show program's version number and exit
 .SH "EXAMPLES"
 .nf
 $ img get "https://raw\.githubusercontent\.com/PlayerG9/img/example/001\.png"
 
 $ img scrape "https://raw\.githubusercontent\.com/PlayerG9/img/main/example/gallery\.html"
+
+$ img view "https://raw\.githubusercontent\.com/PlayerG9/img/example/001\.png"
 .fi
 .SH "HISTORY"
 This Project was renamed and extended from the \fBimg\-get\fR command to the nowadays more versatile \fBimg\fR command
