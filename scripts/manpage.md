@@ -64,6 +64,12 @@ height of image in characters (1 character = 2 pixel)
 * `-D`, `--detailed`, `--no-detailed`:
 use an alternative way to display the image with double the resolution but without colors
 
+### wget
+
+> Download a single image
+
+* `url`:
+the source of the image to download
 
 ### general options
 
@@ -78,6 +84,8 @@ show program's version number and exit
     $ img get "https://raw.githubusercontent.com/PlayerG9/img/example/001.png"
 
     $ img scrape "https://raw.githubusercontent.com/PlayerG9/img/main/example/gallery.html"
+
+    $ img view "https://raw.githubusercontent.com/PlayerG9/img/example/001.png"
 
     $ img view "https://raw.githubusercontent.com/PlayerG9/img/example/001.png"
 

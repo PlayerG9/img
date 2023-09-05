@@ -16,6 +16,7 @@ from . import __version__
 from . import grabber as lib_grabber
 from . import scraper as lib_scraper
 from . import viewer as lib_viewer
+from . import wget as lib_wget
 from . import updater as lib_updater
 
 
@@ -96,7 +97,7 @@ scraper_parser.add_argument('url',
 viewer_parser = subparser.add_parser(
     "view",
     help="Directly view an image in the terminal",
-    description=lib_scraper.__doc__,
+    description=lib_viewer.__doc__,
     aliases=["show"],
 )
 viewer_parser.set_defaults(cls=lib_viewer.ImageViewer)
@@ -108,6 +109,21 @@ viewer_parser.add_argument('-D', '--detailed', action=argparse.BooleanOptionalAc
                            help="view the image without color but with more details")
 viewer_parser.add_argument('path',
                            help="the image to view")
+
+#
+# wget
+#
+
+wget_parser = subparser.add_parser(
+    "wget",
+    help="Download a single image",
+    description=lib_wget.__doc__,
+    aliases=[],
+)
+wget_parser.set_defaults(cls=lib_wget.WGet)
+wget_parser.add_argument('url',
+                         help="the url of the image to download")
+
 
 #
 # main

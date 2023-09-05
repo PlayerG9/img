@@ -40,10 +40,12 @@ _img_completions()
             cur="$CURRENT_WORD"
             _filedir
         fi
+    elif [[ "$SUBCOMMAND" = "wget" ]]; then
+        COMPREPLY=()
     elif [[ "$SUBCOMMAND" = "update" ]]; then
         COMPREPLY=($(compgen -W "--help --check-only" -- "${CURRENT_WORD}"))
     else
-        COMPREPLY=($(compgen -W "--help --version update scrape grab get view show" -- "${CURRENT_WORD}"))
+        COMPREPLY=($(compgen -W "--help --version update scrape grab get view wget show" -- "${CURRENT_WORD}"))
     fi
 }
 

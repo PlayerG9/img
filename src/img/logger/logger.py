@@ -52,6 +52,10 @@ class Logger:
         cls._send(Codes.DELETE_LINE)
 
     @classmethod
+    def pop_last_line(cls):
+        cls.lines.pop(-1)
+
+    @classmethod
     def update(cls):
         diff = len(cls.lines) - cls._last_size
         cls._send(Codes.MOVE_CURSOR_UP * min(cls.max_update - diff, cls._last_size))
