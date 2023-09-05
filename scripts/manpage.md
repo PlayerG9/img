@@ -3,10 +3,11 @@ img(1) -- like wget but for many images at once
 
 ## SYNOPSIS
 
-- `img [-h] [-v] {update,grab,get,scrape} ...`
+- `img [-h] [-v] {update,grab,get,scrape,wget} ...`
 - `img grab [-h] [-S SKIPS] [-H] url`
 - `img scrape [-h] [-A] [-W] [-H] url`
 - `img view [-h] [-D] [-W] [-H] src`
+- `img wget [-h] url`
 
 ## DESCRIPTION
 
@@ -70,6 +71,13 @@ use an alternative way to display the image with double the resolution but witho
 
 * `url`:
 the source of the image to download
+
+### update
+
+> Check for updates and install them
+
+* `--check-only`:
+only check for a new version but don't upgrade
 
 ### general options
 

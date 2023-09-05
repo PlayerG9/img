@@ -36,7 +36,7 @@ subparser = parser.add_subparsers(required=True)
 
 update_parser = subparser.add_parser(
     "update",
-    help="check for updates and install them",
+    help="Check for updates and install them",
     description=lib_updater.__doc__,
     # aliases=["upgrade"],
 )

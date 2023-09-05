@@ -18,7 +18,7 @@ from .. import __version__
 
 
 class Updater:
-    def __init__(self, check_only: int):
+    def __init__(self, check_only: bool):
         self.check_only = check_only
 
     def run(self):
