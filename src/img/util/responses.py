@@ -21,15 +21,19 @@ def extract_content_size(response: Response):
 
 def extract_filename(response: Response):
     try:
-        return next(re.finditer(r'filename=(.+)', response.headers['Content-Disposition']))
+        return urlparse.unquote(
+            next(re.finditer(r'filename=(.+)', response.headers['Content-Disposition'])).group()
+        )
     except (KeyError, StopIteration):
         pass
 
     u = urlparse.urlparse(response.url)
     if '/' in u.path:
-        return u.path.rsplit('/', 1)[1]
+        return urlparse.unquote(
+            u.path.rsplit('/', 1)[1]
+        )
 
-    return u.hostname
+    return urlparse.unquote(u.hostname)
 
 
 def get_free_filename(response: Response):
